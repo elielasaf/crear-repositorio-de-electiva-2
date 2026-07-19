@@ -1,0 +1,37 @@
+---
+- name: Tareas de configuración en servidores
+  hosts: docker
+  tasks:
+    - name: Mostrar el nombre del host
+      debug:
+        msg: "El nombre del host es {{ ansible_hostname }}"
+
+    - name: Mostrar el sistema operativo
+      debug:
+        msg: "El sistema operativo es {{ ansible_distribution }}"
+
+    - name: Crear el directorio /tmp/ansible-demo
+      file:
+        path: /tmp/ansible-demo
+        state: directory
+
+    - name: Crear archivo info.txt con información del servidor
+      copy:
+        dest: /tmp/ansible-demo/info.txt
+        content: |
+          Nombre del servidor: {{ ansible_hostname }}
+          Sistema operativo: {{ ansible_distribution }}
+
+    - name: Crear directorios mediante un loop
+      file:
+        path: /tmp/ansible-demo/{{ item }}
+        state: directory
+      loop:
+        - logs
+        - backup
+        - config
+
+    - name: Mostrar mensaje si el sistema operativo es Ubuntu
+      debug:
+        msg: "Este servidor corre sobre Ubuntu"
+      when: ansible_distribution == "Ubuntu"
